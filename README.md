@@ -95,3 +95,46 @@ DeviceProcessEvents
 <img width="660" height="190" alt="Flag 4" src="https://github.com/user-attachments/assets/b3bb6d77-5afc-4edb-a967-b16b4faa3914" />
 
 ---
+
+### Flag 5: DEFENCE EVASION - File Extension Exclusions
+
+**Objective :**  
+Attackers add file extension exclusions to Windows Defender to prevent scanning of malicious files. Counting these exclusions reveals the scope of the attacker's defense evasion strategy.
+
+**Flag Value :**  
+`3`
+
+**KQL Query :**
+```
+DeviceRegistryEvents
+| where DeviceName == "azuki-sl"
+| where Timestamp between (datetime(2025-11-19) .. datetime(2025-11-20))
+| where RegistryKey has_any ("\\Exclusions\\Extensions")
+| project Timestamp, DeviceName, ActionType, RegistryValueName, RegistryKey
+| order by Timestamp asc 
+```
+
+<img width="1481" height="173" alt="Flag 5" src="https://github.com/user-attachments/assets/d99cc4d8-f7d1-49eb-a3e0-441d577832fd" />
+
+---
+
+### Flag 6: DEFENCE EVASION - Temporary Folder Exclusion
+
+**Objective :**  
+Attackers add folder path exclusions to Windows Defender to prevent scanning of directories used for downloading and executing malicious tools. These exclusions allow malware to run undetected.
+
+**Flag Value :**  
+`C:\Users\KENJI~1.SAT\AppData\Local\Temp`
+
+**KQL Query :**
+```
+DeviceRegistryEvents
+| where DeviceName == "azuki-sl"
+| where Timestamp between (datetime(2025-11-19) .. datetime(2025-11-20))
+| where RegistryKey has_any ("Paths")
+| project Timestamp, DeviceName, ActionType, RegistryValueName, RegistryKey, InitiatingProcessFolderPath
+| order by Timestamp asc
+```
+
+<img width="720" height="220" alt="Flag 6" src="https://github.com/user-attachments/assets/fb1f194a-595d-4f21-8306-c81fb5b491b6" />
+
